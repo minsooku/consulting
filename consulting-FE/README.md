@@ -1,15 +1,17 @@
-# AI-Consulting App
+# consulting_fe
 
-A simple guide to run the **AI-Consulting App** locally.
-# If using git
-git clone <your-repo-url>
-cd ai-consulting-app
+A new Flutter project.
 
+## Getting Started
 
-1. npm install inside frontend folder (will ack like requirements.txt of python)
-to start simulator: npx expo start -c
-uvicorn, venv needed.
+This project is a starting point for a Flutter application.
 
-By Minsoo Jaehyun Joonhyung Sangwon
+A few resources to get you started if this is your first Flutter project:
 
-Continuing...   
+- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
+- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
