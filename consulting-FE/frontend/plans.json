@@ -1,0 +1,732 @@
+{
+  "daily": [
+    {
+      "date": "2025-09-15",
+      "blocks": [
+        {
+          "title": "Workout: Push Day",
+          "category": "workout",
+          "duration_min": 75,
+          "details": [
+            {
+              "label": "Main lifts",
+              "target_value": "Bench press 4x8-12; Incline DB press 3x8-12; Overhead press 3x8-12",
+              "unit": null,
+              "done": false
+            },
+            {
+              "label": "Accessory work",
+              "target_value": "Lateral raises 3x12; Tricep pushdowns 3x12",
+              "unit": "reps",
+              "done": false
+            },
+            {
+              "label": "Warm-up",
+              "target_value": "5-10 min dynamic warm-up",
+              "unit": "minutes",
+              "done": false
+            },
+            {
+              "label": "Tempo & RIR",
+              "target_value": "2-0-2 tempo; 1-2 RIR",
+              "unit": null,
+              "done": false
+            }
+          ]
+        },
+        {
+          "title": "Nutrition: Daily Targets",
+          "category": "nutrition",
+          "duration_min": 10,
+          "details": [
+            {
+              "label": "Calories target",
+              "target_value": 2450,
+              "unit": "kcal",
+              "done": false
+            },
+            {
+              "label": "Protein target",
+              "target_value": 170,
+              "unit": "g",
+              "done": false
+            },
+            {
+              "label": "Carbs target",
+              "target_value": "220-320",
+              "unit": "g",
+              "done": false
+            },
+            {
+              "label": "Fat target",
+              "target_value": "60-85",
+              "unit": "g",
+              "done": false
+            },
+            {
+              "label": "Hydration target",
+              "target_value": "3-4",
+              "unit": "L",
+              "done": false
+            }
+          ]
+        },
+        {
+          "title": "Recovery: Mobility & Sleep",
+          "category": "recovery",
+          "duration_min": 5,
+          "details": [
+            {
+              "label": "Mobility routine",
+              "target_value": "8-12 minutes full-body mobility",
+              "unit": "minutes",
+              "done": false
+            },
+            {
+              "label": "Sleep target",
+              "target_value": "7-9 hours",
+              "unit": "hours",
+              "done": false
+            },
+            {
+              "label": "Breathing & relaxation",
+              "target_value": "5 minutes before bed",
+              "unit": "minutes",
+              "done": false
+            }
+          ]
+        },
+        {
+          "title": "Hydration Habit",
+          "category": "habit",
+          "duration_min": 5,
+          "details": [
+            {
+              "label": "Hydration check",
+              "target_value": "Aim 3-4 L/day",
+              "unit": "L",
+              "done": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2025-09-16",
+      "blocks": [
+        {
+          "title": "Workout: Pull Day",
+          "category": "workout",
+          "duration_min": 75,
+          "details": [
+            {
+              "label": "Main lifts",
+              "target_value": "Deadlift 3x6-8; Bent-over row 3x8-12; Pull-ups 3x8-12",
+              "unit": null,
+              "done": false
+            },
+            {
+              "label": "Accessory work",
+              "target_value": "Face pulls 3x12; DB bicep curls 3x12",
+              "unit": "reps",
+              "done": false
+            },
+            {
+              "label": "Warm-up",
+              "target_value": "5-10 min light cardio + mobility",
+              "unit": "minutes",
+              "done": false
+            },
+            {
+              "label": "Tempo & RIR",
+              "target_value": "2-0-2 tempo; 1-2 RIR",
+              "unit": null,
+              "done": false
+            }
+          ]
+        },
+        {
+          "title": "Nutrition: Daily Targets",
+          "category": "nutrition",
+          "duration_min": 10,
+          "details": [
+            {
+              "label": "Calories target",
+              "target_value": 2450,
+              "unit": "kcal",
+              "done": false
+            },
+            {
+              "label": "Protein target",
+              "target_value": 170,
+              "unit": "g",
+              "done": false
+            },
+            {
+              "label": "Carbs target",
+              "target_value": "220-320",
+              "unit": "g",
+              "done": false
+            },
+            {
+              "label": "Fat target",
+              "target_value": "60-85",
+              "unit": "g",
+              "done": false
+            },
+            {
+              "label": "Hydration target",
+              "target_value": "3-4",
+              "unit": "L",
+              "done": false
+            }
+          ]
+        },
+        {
+          "title": "Recovery: Mobility & Sleep",
+          "category": "recovery",
+          "duration_min": 5,
+          "details": [
+            {
+              "label": "Mobility routine",
+              "target_value": "8-12 minutes full-body mobility",
+              "unit": "minutes",
+              "done": false
+            },
+            {
+              "label": "Sleep target",
+              "target_value": "7-9 hours",
+              "unit": "hours",
+              "done": false
+            },
+            {
+              "label": "Breathing & relaxation",
+              "target_value": "5 minutes before bed",
+              "unit": "minutes",
+              "done": false
+            }
+          ]
+        },
+        {
+          "title": "Hydration Habit",
+          "category": "habit",
+          "duration_min": 5,
+          "details": [
+            {
+              "label": "Hydration check",
+              "target_value": "Aim 3-4 L/day",
+              "unit": "L",
+              "done": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2025-09-17",
+      "blocks": [
+        {
+          "title": "Workout: Leg Day",
+          "category": "workout",
+          "duration_min": 75,
+          "details": [
+            {
+              "label": "Main lifts",
+              "target_value": "Back squat 4x8-12; Leg press 3x10-12; Romanian deadlift 3x8-12",
+              "unit": null,
+              "done": false
+            },
+            {
+              "label": "Accessory work",
+              "target_value": "Leg extensions 3x12; hamstring curls 3x12",
+              "unit": "reps",
+              "done": false
+            },
+            {
+              "label": "Calves",
+              "target_value": "Calf raises 4x12-15",
+              "unit": "reps",
+              "done": false
+            },
+            {
+              "label": "Warm-up",
+              "target_value": "5-10 min light cardio + mobility",
+              "unit": "minutes",
+              "done": false
+            }
+          ]
+        },
+        {
+          "title": "Nutrition: Daily Targets",
+          "category": "nutrition",
+          "duration_min": 5,
+          "details": [
+            {
+              "label": "Calories target",
+              "target_value": 2450,
+              "unit": "kcal",
+              "done": false
+            },
+            {
+              "label": "Protein target",
+              "target_value": 170,
+              "unit": "g",
+              "done": false
+            }
+          ]
+        },
+        {
+          "title": "Recovery: Mobility & Sleep",
+          "category": "recovery",
+          "duration_min": 5,
+          "details": [
+            {
+              "label": "Mobility routine",
+              "target_value": "8-12 minutes",
+              "unit": "minutes",
+              "done": false
+            },
+            {
+              "label": "Sleep target",
+              "target_value": "7-9 hours",
+              "unit": "hours",
+              "done": false
+            }
+          ]
+        },
+        {
+          "title": "Hydration Habit",
+          "category": "habit",
+          "duration_min": 5,
+          "details": [
+            {
+              "label": "Hydration check",
+              "target_value": "Aim 3-4 L/day",
+              "unit": "L",
+              "done": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2025-09-18",
+      "blocks": [
+        {
+          "title": "Workout: Cardio & Core",
+          "category": "workout",
+          "duration_min": 60,
+          "details": [
+            {
+              "label": "Cardio",
+              "target_value": "25-30 min steady-state (bike/t treadmill)",
+              "unit": "minutes",
+              "done": false
+            },
+            {
+              "label": "Core",
+              "target_value": "3x12 ab wheel or cable crunches",
+              "unit": "reps",
+              "done": false
+            },
+            {
+              "label": "Mobility",
+              "target_value": "10 min mobility flow",
+              "unit": "minutes",
+              "done": false
+            }
+          ]
+        },
+        {
+          "title": "Nutrition: Daily Targets",
+          "category": "nutrition",
+          "duration_min": 5,
+          "details": [
+            {
+              "label": "Calories target",
+              "target_value": 2350,
+              "unit": "kcal",
+              "done": false
+            },
+            {
+              "label": "Protein target",
+              "target_value": 170,
+              "unit": "g",
+              "done": false
+            }
+          ]
+        },
+        {
+          "title": "Recovery: Mobility & Sleep",
+          "category": "recovery",
+          "duration_min": 5,
+          "details": [
+            {
+              "label": "Mobility routine",
+              "target_value": "8-12 minutes",
+              "unit": "minutes",
+              "done": false
+            },
+            {
+              "label": "Sleep target",
+              "target_value": "7-9 hours",
+              "unit": "hours",
+              "done": false
+            }
+          ]
+        },
+        {
+          "title": "Hydration Habit",
+          "category": "habit",
+          "duration_min": 5,
+          "details": [
+            {
+              "label": "Hydration check",
+              "target_value": "Aim 3-4 L/day",
+              "unit": "L",
+              "done": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2025-09-19",
+      "blocks": [
+        {
+          "title": "Workout: Push Day",
+          "category": "workout",
+          "duration_min": 75,
+          "details": [
+            {
+              "label": "Main lifts",
+              "target_value": "DB bench press 4x8-12; Overhead press 3x8-12; Dumbbell flyes 3x10-12",
+              "unit": null,
+              "done": false
+            },
+            {
+              "label": "Accessory work",
+              "target_value": "Face pulls 3x12; Tricep extensions 3x12",
+              "unit": "reps",
+              "done": false
+            },
+            {
+              "label": "Warm-up",
+              "target_value": "5-10 min light cardio + mobility",
+              "unit": "minutes",
+              "done": false
+            }
+          ]
+        },
+        {
+          "title": "Nutrition: Daily Targets",
+          "category": "nutrition",
+          "duration_min": 5,
+          "details": [
+            {
+              "label": "Calories target",
+              "target_value": 2450,
+              "unit": "kcal",
+              "done": false
+            },
+            {
+              "label": "Protein target",
+              "target_value": 170,
+              "unit": "g",
+              "done": false
+            }
+          ]
+        },
+        {
+          "title": "Recovery: Mobility & Sleep",
+          "category": "recovery",
+          "duration_min": 5,
+          "details": [
+            {
+              "label": "Mobility routine",
+              "target_value": "8-12 minutes",
+              "unit": "minutes",
+              "done": false
+            },
+            {
+              "label": "Sleep target",
+              "target_value": "7-9 hours",
+              "unit": "hours",
+              "done": false
+            }
+          ]
+        },
+        {
+          "title": "Hydration Habit",
+          "category": "habit",
+          "duration_min": 5,
+          "details": [
+            {
+              "label": "Hydration check",
+              "target_value": "Aim 3-4 L/day",
+              "unit": "L",
+              "done": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2025-09-20",
+      "blocks": [
+        {
+          "title": "Workout: Pull Day",
+          "category": "workout",
+          "duration_min": 75,
+          "details": [
+            {
+              "label": "Main lifts",
+              "target_value": "Bent-over row 4x8-12; Lat pulldown 3x10-12; Barbell curl 3x10-12",
+              "unit": null,
+              "done": false
+            },
+            {
+              "label": "Accessory work",
+              "target_value": "Hammer curls 3x12; Shrugs 3x12",
+              "unit": "reps",
+              "done": false
+            },
+            {
+              "label": "Warm-up",
+              "target_value": "5-10 min cardio + mobility",
+              "unit": "minutes",
+              "done": false
+            }
+          ]
+        },
+        {
+          "title": "Nutrition: Daily Targets",
+          "category": "nutrition",
+          "duration_min": 5,
+          "details": [
+            {
+              "label": "Calories target",
+              "target_value": 2450,
+              "unit": "kcal",
+              "done": false
+            },
+            {
+              "label": "Protein target",
+              "target_value": 170,
+              "unit": "g",
+              "done": false
+            }
+          ]
+        },
+        {
+          "title": "Recovery: Mobility & Sleep",
+          "category": "recovery",
+          "duration_min": 5,
+          "details": [
+            {
+              "label": "Mobility routine",
+              "target_value": "8-12 minutes",
+              "unit": "minutes",
+              "done": false
+            },
+            {
+              "label": "Sleep target",
+              "target_value": "7-9 hours",
+              "unit": "hours",
+              "done": false
+            }
+          ]
+        },
+        {
+          "title": "Hydration Habit",
+          "category": "habit",
+          "duration_min": 5,
+          "details": [
+            {
+              "label": "Hydration check",
+              "target_value": "Aim 3-4 L/day",
+              "unit": "L",
+              "done": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2025-09-21",
+      "blocks": [
+        {
+          "title": "Workout: Leg Day (Light)",
+          "category": "workout",
+          "duration_min": 60,
+          "details": [
+            {
+              "label": "Main lifts",
+              "target_value": "Front squat 3x8-12; leg curls 3x12",
+              "unit": null,
+              "done": false
+            },
+            {
+              "label": "Accessory",
+              "target_value": "Calf raises 3x12; Ab wheel 3x12",
+              "unit": "reps",
+              "done": false
+            },
+            {
+              "label": "Warm-up",
+              "target_value": "5-10 min mobility",
+              "unit": "minutes",
+              "done": false
+            }
+          ]
+        },
+        {
+          "title": "Nutrition: Daily Targets",
+          "category": "nutrition",
+          "duration_min": 5,
+          "details": [
+            {
+              "label": "Calories target",
+              "target_value": 2350,
+              "unit": "kcal",
+              "done": false
+            },
+            {
+              "label": "Protein target",
+              "target_value": 170,
+              "unit": "g",
+              "done": false
+            }
+          ]
+        },
+        {
+          "title": "Recovery: Mobility & Sleep",
+          "category": "recovery",
+          "duration_min": 5,
+          "details": [
+            {
+              "label": "Mobility routine",
+              "target_value": "8-12 minutes",
+              "unit": "minutes",
+              "done": false
+            },
+            {
+              "label": "Sleep target",
+              "target_value": "7-9 hours",
+              "unit": "hours",
+              "done": false
+            }
+          ]
+        },
+        {
+          "title": "Hydration Habit",
+          "category": "habit",
+          "duration_min": 5,
+          "details": [
+            {
+              "label": "Hydration check",
+              "target_value": "Aim 3-4 L/day",
+              "unit": "L",
+              "done": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2025-09-22",
+      "blocks": [
+        {
+          "title": "Recovery Day: Mobility & Active Recovery",
+          "category": "recovery",
+          "duration_min": 60,
+          "details": [
+            {
+              "label": "Full-body mobility",
+              "target_value": "15-20 minutes",
+              "unit": "minutes",
+              "done": false
+            },
+            {
+              "label": "Light cardio (optional)",
+              "target_value": "15-20 minutes",
+              "unit": "minutes",
+              "done": false
+            },
+            {
+              "label": "Sleep target",
+              "target_value": "7-9 hours",
+              "unit": "hours",
+              "done": false
+            }
+          ]
+        },
+        {
+          "title": "Nutrition: Daily Targets",
+          "category": "nutrition",
+          "duration_min": 5,
+          "details": [
+            {
+              "label": "Calories target",
+              "target_value": 2350,
+              "unit": "kcal",
+              "done": false
+            },
+            {
+              "label": "Protein target",
+              "target_value": 170,
+              "unit": "g",
+              "done": false
+            }
+          ]
+        },
+        {
+          "title": "Hydration Habit",
+          "category": "habit",
+          "duration_min": 5,
+          "details": [
+            {
+              "label": "Hydration check",
+              "target_value": "Aim 3-4 L/day",
+              "unit": "L",
+              "done": false
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "weekly": [
+    {
+      "week_number": 38,
+      "theme": "Hypertrophy-focused with mild weight cut",
+      "notes": "8-day microcycle; monitor progress; protein target ~1.8 g/kg; adjust calories as needed.",
+      "details": [
+        {
+          "label": "Total weekly training time",
+          "target_value": 720,
+          "unit": "minutes",
+          "done": false
+        },
+        {
+          "label": "Daily protein target",
+          "target_value": 170,
+          "unit": "g",
+          "done": false
+        },
+        {
+          "label": "Calorie deficit",
+          "target_value": "-200 to -400 kcal/day",
+          "unit": "cal",
+          "done": false
+        },
+        {
+          "label": "Progress checks",
+          "target_value": "Weekly weight and measurements; adjust if no progress in 2 weeks",
+          "unit": null,
+          "done": false
+        }
+      ]
+    }
+  ]
+}

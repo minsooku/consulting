@@ -1,0 +1,11 @@
+{
+  "physique": { "height": 180, "weight": 85, "gender": "Male", "age": 35 },
+  "goalType": "hypertrophy",
+  "experience": "Beginner",
+  "hoursPerWeek": 12,
+  "constraints": "",
+  "preferences": "",
+  "dietEffort": "",
+  "startDate": "2025-09-22",
+  "endDate": "2025-09-28"
+}
