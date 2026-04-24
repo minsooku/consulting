@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app import models, schemas, auth, database
-from app.auth import get_current_user  # import JWT dependency
-from app.models import User  # import your User model
+from app.auth import get_current_user_uuid
 
 router = APIRouter(tags=["auth"])
 
@@ -38,7 +37,6 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
     
     return db_user
 
-# Example protected route
 @router.get("/protected")
-def read_protected_route(current_user: User = Depends(get_current_user)):
-    return {"message": f"Hello {current_user.full_name}, you are authenticated!"}
+def read_protected_route(user_uuid: str = Depends(get_current_user_uuid)):
+    return {"message": "You are authenticated with UUID.", "uuid": user_uuid}

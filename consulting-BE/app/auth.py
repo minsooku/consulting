@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from uuid import UUID
+
+from fastapi import APIRouter, Depends, Header, HTTPException, status
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
@@ -12,7 +14,7 @@ from app.utils import SECRET_KEY, ALGORITHM
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 router = APIRouter(prefix="/auth", tags=["auth"])
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login", auto_error=False)
 
 # Utility functions
 def verify_password(plain_password, hashed_password):
@@ -24,12 +26,44 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+def normalize_uuid(value: str) -> str:
+    try:
+        return str(UUID(value))
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid user UUID",
+        )
+
+def get_current_user_uuid(x_user_uuid: str | None = Header(default=None, alias="X-User-UUID")):
+    if not x_user_uuid:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="X-User-UUID header is required",
+        )
+    return normalize_uuid(x_user_uuid)
+
+def get_current_user(
+    token: str | None = Depends(oauth2_scheme),
+    x_user_uuid: str | None = Header(default=None, alias="X-User-UUID"),
+    db: Session = Depends(get_db),
+):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+
+    if x_user_uuid:
+        user_uuid = normalize_uuid(x_user_uuid)
+        user = db.query(models.User).filter(models.User.uuid == user_uuid).first()
+        if not user:
+            raise credentials_exception
+        return user
+
+    if not token:
+        raise credentials_exception
+
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
@@ -71,3 +105,7 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
 @router.get("/me", response_model=schemas.UserOut)
 def read_current_user(current_user: models.User = Depends(get_current_user)):
     return current_user
+
+@router.get("/uuid/me")
+def read_current_uuid(user_uuid: str = Depends(get_current_user_uuid)):
+    return {"uuid": user_uuid}
