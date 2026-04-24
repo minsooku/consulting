@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# VSCode settings
+.vscode/
+
+# Env files
+.env
+
+# Node.js
+frontend/node_modules/
+frontend/.expo/
+node_modules
+
+# Expo
+frontend/.expo
+.expo
