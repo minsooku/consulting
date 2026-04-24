@@ -19,39 +19,32 @@ class Physique(BaseModel):
     weight: int
     gender: Literal["Male", "Female"]
     age: int
-    notes: Optional[str] = None
 
 class FitnessPrompt(BaseModel):
+    name: str
     physique: Physique
     goalType: str
     experience: str
-    hoursPerWeek: int
-    constraints: str = ""
-    preferences: str = ""
-    dietEffort: str = ""
-    startDate: date
-    endDate: date
-    notes: Optional[str] = None
+    daysPerWeek: int = Field(ge=1, le=7)
+    diet: bool
 
 
-def fitness_prompt(p: FitnessPrompt) -> str:
-    # Plain-text prompt plus schema (the schema is enforced via response_format too)
+def fitness_prompt(p: FitnessPrompt, start_date: date, end_date: date) -> str:
     return f"""
-Physique: {p.physique}
+User name: {p.name}
+Physique:
     Height: {p.physique.height} cm
     Weight: {p.physique.weight} kg
     Gender: {p.physique.gender}
     Age: {p.physique.age}
-    Notes: {p.physique.notes}
 Goal type: {p.goalType}
 Experience: {p.experience}
-Time budget: {p.hoursPerWeek} hours/week
-Constraints: {p.constraints}
-Preferences: {p.preferences}
-Diet willingness: {p.dietEffort}
-Start date: {p.startDate}
-End date: {p.endDate}
-Notes: {p.notes}
+Workout days per week: {p.daysPerWeek}
+Include diet plan: {"yes" if p.diet else "no"}
+Plan window: {start_date} to {end_date}
+Rules:
+- Produce exactly ({p.daysPerWeek}) workout days per 7-day week; the remaining days are rest/recovery.
+- {"Include daily nutrition blocks and weekly nutrition checklists." if p.diet else "Do NOT include any nutrition or diet blocks. Skip nutrition category entirely."}
 """
 
 

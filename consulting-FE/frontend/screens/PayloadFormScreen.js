@@ -2,21 +2,19 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Button, StyleSheet, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Calendar } from "react-native-calendars";
+
+const TOTAL_STEPS = 9;
 
 export default function PayloadFormScreen({ navigation }) {
     const [step, setStep] = useState(0);
 
     const [payload, setPayload] = useState({
+        name: "",
         physique: { height: "", weight: "", gender: "", age: "" },
         goalType: "",
         experience: "",
-        hoursPerWeek: 0,
-        constraints: "",
-        preferences: "",
-        dietEffort: "",
-        startDate: "",
-        endDate: "",
+        daysPerWeek: 0,
+        diet: null,
     });
 
     const updatePhysique = (field, value) => {
@@ -27,38 +25,38 @@ export default function PayloadFormScreen({ navigation }) {
     };
 
     const updateField = (field, value) => {
-        setPayload((prev) => {
-            let updated = { ...prev, [field]: value };
-
-            if (field === "startDate") {
-                const start = new Date(value);
-                if (!isNaN(start.getTime())) {
-                    const end = new Date(start);
-                    end.setDate(start.getDate() + 28); // +4 weeks
-                    const endStr = end.toISOString().split("T")[0]; // YYYY-MM-DD
-                    updated.endDate = endStr;
-                }
-            }
-
-            return updated;
-        });
+        setPayload((prev) => ({ ...prev, [field]: value }));
     };
 
-    const savePayload = async () => {
-        try {
-            await AsyncStorage.setItem("payload", JSON.stringify(payload));
-            Alert.alert("Success", "Payload saved locally!");
-            console.log("Saved payload:", payload);
-            navigation.goBack(); // go back after saving
-        } catch (e) {
-            console.error("Error saving payload:", e);
-        }
-    };
+    const buildFinalPayload = () => ({
+        name: payload.name.trim(),
+        physique: {
+            height: Number(payload.physique.height) || 0,
+            weight: Number(payload.physique.weight) || 0,
+            gender: payload.physique.gender,
+            age: Number(payload.physique.age) || 0,
+        },
+        goalType: payload.goalType,
+        experience: payload.experience,
+        daysPerWeek: Number(payload.daysPerWeek) || 0,
+        diet: !!payload.diet,
+    });
 
-    // Steps content
     const renderStep = () => {
         switch (step) {
             case 0:
+                return (
+                    <>
+                        <Text style={styles.label}>Enter your name</Text>
+                        <TextInput
+                            placeholder="e.g. Minsoo"
+                            value={payload.name}
+                            onChangeText={(v) => updateField("name", v)}
+                            style={styles.input}
+                        />
+                    </>
+                );
+            case 1:
                 return (
                     <>
                         <Text style={styles.label}>Enter your Height (cm)</Text>
@@ -71,7 +69,7 @@ export default function PayloadFormScreen({ navigation }) {
                         />
                     </>
                 );
-            case 1:
+            case 2:
                 return (
                     <>
                         <Text style={styles.label}>Enter your Weight (kg)</Text>
@@ -84,7 +82,20 @@ export default function PayloadFormScreen({ navigation }) {
                         />
                     </>
                 );
-            case 2:
+            case 3:
+                return (
+                    <>
+                        <Text style={styles.label}>Enter your Age</Text>
+                        <TextInput
+                            placeholder="e.g. 35"
+                            keyboardType="numeric"
+                            value={payload.physique.age.toString()}
+                            onChangeText={(v) => updatePhysique("age", v)}
+                            style={styles.input}
+                        />
+                    </>
+                );
+            case 4:
                 return (
                     <>
                         <Text style={styles.label}>Select Gender</Text>
@@ -104,32 +115,19 @@ export default function PayloadFormScreen({ navigation }) {
                         </View>
                     </>
                 );
-            case 3:
-                return (
-                    <>
-                        <Text style={styles.label}>Enter your Age</Text>
-                        <TextInput
-                            placeholder="e.g. 35"
-                            keyboardType="numeric"
-                            value={payload.physique.age.toString()}
-                            onChangeText={(v) => updatePhysique("age", v)}
-                            style={styles.input}
-                        />
-                    </>
-                );
-            case 4:
+            case 5:
                 return (
                     <>
                         <Text style={styles.label}>Enter Goal Type</Text>
                         <TextInput
-                            placeholder="e.g. hypertrophy"
+                            placeholder="e.g. hypertrophy, weight loss"
                             value={payload.goalType}
                             onChangeText={(v) => updateField("goalType", v)}
                             style={styles.input}
                         />
                     </>
                 );
-            case 5:
+            case 6:
                 return (
                     <>
                         <Text style={styles.label}>Select Experience</Text>
@@ -149,76 +147,47 @@ export default function PayloadFormScreen({ navigation }) {
                         </View>
                     </>
                 );
-            case 6:
+            case 7:
                 return (
                     <>
-                        <Text style={styles.label}>Select Hours per Week</Text>
+                        <Text style={styles.label}>Workout days per week</Text>
                         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-                            {[3, 6, 9, 12, 15].map((h) => (
+                            {[1, 2, 3, 4, 5, 6, 7].map((d) => (
                                 <TouchableOpacity
-                                    key={h}
-                                    onPress={() => updateField("hoursPerWeek", h)}
+                                    key={d}
+                                    onPress={() => updateField("daysPerWeek", d)}
                                     style={[
                                         styles.button,
-                                        payload.hoursPerWeek === h && styles.buttonSelected,
+                                        payload.daysPerWeek === d && styles.buttonSelected,
                                     ]}
                                 >
-                                    <Text style={styles.buttonText}>{h}</Text>
+                                    <Text style={styles.buttonText}>{d}</Text>
                                 </TouchableOpacity>
                             ))}
                         </View>
                     </>
                 );
-  case 7:
-        return (
-          <>
-            <Text style={styles.label}>Select Start Date</Text>
-            <Calendar
-              onDayPress={(day) => updateField("startDate", day.dateString)}
-              markedDates={{
-                [payload.startDate]: { selected: true, selectedColor: "blue" },
-              }}
-            />
-            <Text style={{ marginTop: 10 }}>
-              Selected Start Date: {payload.startDate}
-            </Text>
-            <Text>Calculated End Date: {payload.endDate}</Text>
-          </>
-        );
             case 8:
                 return (
                     <>
-                        <Text style={styles.label}>Constraints</Text>
-                        <TextInput
-                            placeholder="e.g. knee injury"
-                            value={payload.constraints}
-                            onChangeText={(v) => updateField("constraints", v)}
-                            style={styles.input}
-                        />
-                    </>
-                );
-            case 9:
-                return (
-                    <>
-                        <Text style={styles.label}>Preferences</Text>
-                        <TextInput
-                            placeholder="e.g. like swimming"
-                            value={payload.preferences}
-                            onChangeText={(v) => updateField("preferences", v)}
-                            style={styles.input}
-                        />
-                    </>
-                );
-            case 10:
-                return (
-                    <>
-                        <Text style={styles.label}>Diet Effort</Text>
-                        <TextInput
-                            placeholder="e.g. strict"
-                            value={payload.dietEffort}
-                            onChangeText={(v) => updateField("dietEffort", v)}
-                            style={styles.input}
-                        />
+                        <Text style={styles.label}>Include diet plan?</Text>
+                        <View style={{ flexDirection: "row" }}>
+                            {[
+                                { label: "Yes", value: true },
+                                { label: "No", value: false },
+                            ].map((opt) => (
+                                <TouchableOpacity
+                                    key={opt.label}
+                                    onPress={() => updateField("diet", opt.value)}
+                                    style={[
+                                        styles.button,
+                                        payload.diet === opt.value && styles.buttonSelected,
+                                    ]}
+                                >
+                                    <Text style={styles.buttonText}>{opt.label}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
                     </>
                 );
             default:
@@ -229,14 +198,13 @@ export default function PayloadFormScreen({ navigation }) {
                             title="Save Payload & Go to PlanScreen"
                             onPress={async () => {
                                 try {
-                                    // Save payload to AsyncStorage
-                                    await AsyncStorage.setItem("payload", JSON.stringify(payload));
-                                    console.log("Saved payload:", payload);
-
-                                    // Navigate to PlanScreen
+                                    const finalPayload = buildFinalPayload();
+                                    await AsyncStorage.setItem("payload", JSON.stringify(finalPayload));
+                                    console.log("Saved payload:", finalPayload);
                                     navigation.navigate("PlanScreen");
                                 } catch (e) {
                                     console.error("Error saving payload:", e);
+                                    Alert.alert("Error", "Failed to save payload");
                                 }
                             }}
                         />
@@ -249,7 +217,7 @@ export default function PayloadFormScreen({ navigation }) {
         <View style={{ flex: 1, padding: 20 }}>
             {renderStep()}
 
-            {step <= 10 && (
+            {step < TOTAL_STEPS && (
                 <Button title="Next" onPress={() => setStep(step + 1)} />
             )}
         </View>
