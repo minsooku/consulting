@@ -8,7 +8,7 @@ class FitnessApi {
   /// POST /plans/generate — Generate a multi-week AI fitness plan.
   Future<FitnessResponse> generatePlan(FitnessPrompt prompt) async {
     final data = await ApiClient.instance.post(
-      '/plans/generate',
+      '/test',
       body: prompt.toJson(),
     );
     return FitnessResponse.fromJson(data as Map<String, dynamic>);

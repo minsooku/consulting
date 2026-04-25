@@ -199,6 +199,25 @@ class _AlarmPageState extends State<AlarmPage> {
   Widget _buildBody() {
     final fp = context.watch<FitnessProvider>();
 
+    if (fp.loading) {
+      return const Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(strokeWidth: 2),
+            SizedBox(height: 16),
+            Text(
+              'Loading your plan…',
+              style: TextStyle(
+                fontSize: 15,
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     if (!fp.hasPlan) {
       return _EmptyState(
         icon: Icons.calendar_today_outlined,
