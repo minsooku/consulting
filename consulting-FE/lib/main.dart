@@ -13,6 +13,7 @@ import 'package:consulting_fe/components/others/lock_screen_preview.dart';
 import 'package:consulting_fe/components/platform/platform_sheet.dart';
 import 'package:consulting_fe/const/app_theme.dart';
 import 'package:consulting_fe/pages/homepage.dart';
+import 'package:consulting_fe/pages/onboarding/onboarding_intro_page.dart';
 import 'package:consulting_fe/pages/sheets/address_picker_content.dart';
 import 'package:consulting_fe/pages/sheets/address_search_content.dart';
 import 'package:consulting_fe/pages/sheets/alarm_sound_content.dart';
@@ -75,7 +76,8 @@ void sheetMain() async {
             savedLocations: locations,
             currentLabel: args['currentLabel'] as String? ?? '',
             showLabelStep: args['showLabelStep'] as bool? ?? true,
-            onResult: (suggestion) => CNSheetContent.close(suggestion?.toJson()),
+            onResult: (suggestion) =>
+                CNSheetContent.close(suggestion?.toJson()),
           );
         },
         'mathMission': (args) =>
@@ -164,10 +166,8 @@ class _AppInitState extends State<_AppInit> {
     PlatformSheet.warmUp();
     await context.read<AuthProvider>().initWithDevice();
     if (!mounted) return;
-    // Load cached plan; fall back to mock data if nothing is saved.
-    final fp = context.read<FitnessProvider>();
-    await fp.loadFromCache();
-    if (!fp.hasPlan) fp.loadMock();
+    // Try to restore a previously cached plan.
+    await context.read<FitnessProvider>().loadFromCache();
     FlutterNativeSplash.remove();
     setState(() => _ready = true);
   }
@@ -175,6 +175,9 @@ class _AppInitState extends State<_AppInit> {
   @override
   Widget build(BuildContext context) {
     if (!_ready) return const Scaffold(body: SizedBox.shrink());
+    // Show onboarding on first launch (no plan yet); skip it for returning users.
+    final hasPlan = context.watch<FitnessProvider>().hasPlan;
+    if (!hasPlan) return const OnboardingIntroPage();
     return const HomePage();
   }
 }

@@ -8,12 +8,8 @@ class ApiClient {
   ApiClient._();
   static final instance = ApiClient._();
 
-  // Set via --dart-define=API_BASE_URL=https://... at build time.
-  // Can also be overridden at runtime before the first call.
-  static String baseUrl = const String.fromEnvironment(
-    'API_BASE_URL',
-    defaultValue: 'http://localhost:8000',
-  );
+  static const String baseUrl =
+      'https://consulting-production-2926.up.railway.app';
 
   static void Function()? onSessionExpired;
 

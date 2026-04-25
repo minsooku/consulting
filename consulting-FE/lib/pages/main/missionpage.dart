@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 
 import 'package:consulting_fe/api/models/fitness_models.dart';
 import 'package:consulting_fe/const/app_colors.dart';
+import 'package:consulting_fe/mock/machine_images.dart';
+import 'package:consulting_fe/mock/mock_fitness.dart';
 import 'package:consulting_fe/provider/fitness_provider.dart';
 
 class MissionPage extends StatefulWidget {
@@ -782,12 +784,30 @@ class _WorkoutBlockCardState extends State<_WorkoutBlockCard> {
                           color: AppColors.textPrimary,
                         ),
                       ),
-                      Text(
-                        '${block.durationMin} min',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: AppColors.textSecondary,
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            '${block.durationMin} min',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          const Icon(
+                            Icons.location_on,
+                            size: 11,
+                            color: AppColors.textSecondary,
+                          ),
+                          const SizedBox(width: 2),
+                          const Text(
+                            'Eppley',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -803,9 +823,7 @@ class _WorkoutBlockCardState extends State<_WorkoutBlockCard> {
               const SizedBox(height: 12),
               const Divider(height: 1, color: AppColors.sub),
               const SizedBox(height: 10),
-              ...block.details.map(
-                (item) => _ExerciseRow(item: item),
-              ),
+              ...block.details.map((item) => _ExerciseRow(item: item)),
             ],
           ],
         ),
@@ -824,45 +842,129 @@ class _ExerciseRow extends StatefulWidget {
 }
 
 class _ExerciseRowState extends State<_ExerciseRow> {
+  bool _showImage = false;
+
   @override
   Widget build(BuildContext context) {
     final item = widget.item;
-    return GestureDetector(
-      onTap: () => setState(() => item.done = !item.done),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 5),
-        child: Row(
-          children: [
-            Icon(
-              item.done ? Icons.check_circle : Icons.radio_button_unchecked,
-              size: 18,
-              color: item.done ? AppColors.success : AppColors.sub,
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                item.label,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: item.done
-                      ? AppColors.textSecondary
-                      : AppColors.textPrimary,
-                  decoration: item.done ? TextDecoration.lineThrough : null,
+    final imagePath = MachineImages.resolve(machine: item.machine, exerciseName: item.label);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: () {
+            setState(() => item.done = !item.done);
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            child: Row(
+              children: [
+                Icon(
+                  item.done ? Icons.check_circle : Icons.radio_button_unchecked,
+                  size: 18,
+                  color: item.done ? AppColors.success : AppColors.sub,
                 ),
-              ),
-            ),
-            if (item.targetDisplay.isNotEmpty)
-              Text(
-                item.targetDisplay,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textSecondary,
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    item.label,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: item.done
+                          ? AppColors.textSecondary
+                          : AppColors.textPrimary,
+                      decoration:
+                          item.done ? TextDecoration.lineThrough : null,
+                    ),
+                  ),
                 ),
-              ),
-          ],
+                if (item.targetDisplay.isNotEmpty)
+                  Text(
+                    item.targetDisplay,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                if (imagePath != null) ...[
+                  const SizedBox(width: 8),
+                  GestureDetector(
+                    onTap: () => setState(() => _showImage = !_showImage),
+                    child: Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                          color: _showImage
+                              ? AppColors.accent
+                              : AppColors.sub,
+                          width: 1,
+                        ),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5),
+                        child: Image.asset(
+                          imagePath,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
         ),
-      ),
+        if (imagePath != null && _showImage)
+          GestureDetector(
+            onTap: () => setState(() => _showImage = false),
+            child: Container(
+              margin: const EdgeInsets.only(left: 28, bottom: 8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.sub),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Image.asset(
+                    imagePath,
+                    fit: BoxFit.contain,
+                    height: 160,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    color: AppColors.surface,
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.location_on,
+                          size: 12,
+                          color: AppColors.textSecondary,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          MockFitness.location,
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

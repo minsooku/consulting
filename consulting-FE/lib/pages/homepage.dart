@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     const MissionPage(),
   ];
 
-  static const List<String> _titles = <String>['Agenda', 'Workout'];
+  static const List<String> _titles = <String>['Agenda', 'Weekly'];
 
   bool get _isCupertino {
     if (kIsWeb) return false;

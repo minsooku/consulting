@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:consulting_fe/api/models/fitness_models.dart';
 import 'package:consulting_fe/components/customs/number_flow/number_flow.dart';
 import 'package:consulting_fe/components/platform/platform_button.dart';
 import 'package:consulting_fe/const/app_colors.dart';
+import 'package:consulting_fe/pages/homepage.dart';
 import 'package:consulting_fe/pages/onboarding/onboarding_data.dart';
 import 'package:consulting_fe/pages/onboarding/onboarding_shared.dart';
 import 'package:consulting_fe/pages/onboarding/step0_name_page.dart';
@@ -12,6 +15,7 @@ import 'package:consulting_fe/pages/onboarding/step4_goal_page.dart';
 import 'package:consulting_fe/pages/onboarding/step5_experience_page.dart';
 import 'package:consulting_fe/pages/onboarding/step6_workout_days_page.dart';
 import 'package:consulting_fe/pages/onboarding/step7_diet_page.dart';
+import 'package:consulting_fe/provider/fitness_provider.dart';
 
 class OnboardingFlow extends StatefulWidget {
   const OnboardingFlow({super.key, OnboardingData? data})
@@ -77,21 +81,54 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
     }
   }
 
+  /// Convert onboarding answers → API request body.
+  FitnessPrompt _buildPrompt() => FitnessPrompt(
+    name: _data.name.trim().isEmpty ? 'User' : _data.name.trim(),
+    physique: Physique(
+      height: 170, // height step not collected; use sensible default
+      weight: _data.weight,
+      gender: _data.gender,
+      age: _data.age,
+    ),
+    goalType: _data.goalType,
+    experience: _data.experience,
+    daysPerWeek: _data.workoutDaysPerWeek,
+    diet: _data.hasDiet,
+  );
+
   Future<void> _submit() async {
     setState(() {
       _submitting = true;
       _submitError = null;
     });
 
-    // TODO: call API with _data once spec is confirmed
-    await Future.delayed(const Duration(milliseconds: 400));
+    final fp = context.read<FitnessProvider>();
+    final prompt = _buildPrompt();
 
+    // Call the real API; fall back to mock on any error.
+    await fp.generatePlan(prompt);
     if (!mounted) return;
+
+    if (!fp.hasPlan) {
+      // API failed — load mock so the user still gets a plan.
+      fp.loadMock();
+    }
+
     setState(() => _exiting = true);
     await Future.delayed(const Duration(milliseconds: 350));
     if (!mounted) return;
 
-    Navigator.of(context).pop();
+    // Replace the entire navigator stack so the user can't go back to onboarding.
+    Navigator.of(context).pushAndRemoveUntil(
+      PageRouteBuilder(
+        pageBuilder: (_, _, _) =>
+            const HomePage(fromOnboarding: true),
+        transitionsBuilder: (_, animation, _, child) =>
+            FadeTransition(opacity: animation, child: child),
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
+      (_) => false,
+    );
   }
 
   bool get _stepComplete {

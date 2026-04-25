@@ -6,6 +6,7 @@ class ChecklistItem {
     this.targetValue,
     this.unit,
     this.done = false,
+    this.machine,
   });
 
   final String label;
@@ -13,11 +14,15 @@ class ChecklistItem {
   final String? unit;
   bool done;
 
+  /// Image filename from assets/machine/* (e.g. "Converging Chest Press.png"), or null.
+  final String? machine;
+
   factory ChecklistItem.fromJson(Map<String, dynamic> json) => ChecklistItem(
     label: json['label'] as String,
     targetValue: json['target_value'],
     unit: json['unit'] as String?,
     done: json['done'] as bool? ?? false,
+    machine: json['machine'] as String?,
   );
 
   Map<String, dynamic> toJson() => {
@@ -25,6 +30,7 @@ class ChecklistItem {
     if (targetValue != null) 'target_value': targetValue,
     if (unit != null) 'unit': unit,
     'done': done,
+    if (machine != null) 'machine': machine,
   };
 
   /// Human-readable summary of target, e.g. "150 g" or "8 h"

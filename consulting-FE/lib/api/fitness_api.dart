@@ -5,9 +5,12 @@ class FitnessApi {
   FitnessApi._();
   static final instance = FitnessApi._();
 
-  /// POST /test — Generate a multi-week AI fitness plan.
+  /// POST /plans/generate — Generate a multi-week AI fitness plan.
   Future<FitnessResponse> generatePlan(FitnessPrompt prompt) async {
-    final data = await ApiClient.instance.post('/test', body: prompt.toJson());
+    final data = await ApiClient.instance.post(
+      '/plans/generate',
+      body: prompt.toJson(),
+    );
     return FitnessResponse.fromJson(data as Map<String, dynamic>);
   }
 
