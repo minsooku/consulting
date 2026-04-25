@@ -8,8 +8,41 @@ SYSTEM_MSG = (
     "You are CoachGPT, a careful and pragmatic planning assistant. "
     "Return STRICT JSON only, no extra text. "
     "Safety rules: no medical advice or supplements. "
-    "Respect time budgets and include recovery and nutrition checklists."
+    "Respect time budgets and include recovery and nutrition checklists. "
+    "When a checklist item is a machine-based workout, set its machine field "
+    "to an exact filename from the allowed machine list. Use null only for "
+    "non-machine items or bodyweight/free-weight exercises."
 )
+
+MACHINE_IMAGE_FILENAMES = [
+    "Iso-Lateral High Row.png",
+    "Iso-Lateral Horizontal Bench Press.png",
+    "Iso-Lateral Incline Press.png",
+    "Iso-Lateral Kneeling Leg Curl.png",
+    "Iso-Lateral Low Row.png",
+    "Iso-Lateral Row.png",
+    "Iso-Lateral Shoulder Press.png",
+    "Iso-Lateral Wide Chest.png",
+    "Axiom Series Hip Abductor Adductor.png",
+    "Axiom Series Lat Pulldown.png",
+    "Axiom Series Leg Curl.png",
+    "Axiom Series Leg Extension_Leg Curl.png",
+    "Axiom Series Leg Extension.png",
+    "Axiom Series Shoulder Press.png",
+    "Insignia Series Biceps Curl.png",
+    "Insignia Series Lateral Raise.png",
+    "Insignia Series Pulldown.png",
+    "Biceps Curl.png",
+    "Converging Chest Press.png",
+    "Converging Shoulder Press.png",
+    "Inner Thigh.png",
+    "Leg Extension.png",
+    "Outer Thigh.png",
+    "Prone Leg Curl.png",
+    "Rear Delt Pec Fly.png",
+    "Seated Leg Curl.png",
+    "Triceps Extension.png",
+]
 
 
 # Prompt ------------------------------------------\
@@ -45,6 +78,13 @@ Plan window: {start_date} to {end_date}
 Rules:
 - Produce exactly ({p.daysPerWeek}) workout days per 7-day week; the remaining days are rest/recovery.
 - {"Include daily nutrition blocks and weekly nutrition checklists." if p.diet else "Do NOT include any nutrition or diet blocks. Skip nutrition category entirely."}
+- For workout checklist items, prefer machine exercises from the allowed machine list below.
+- Set details[].machine to the exact matching filename, including capitalization, spaces, hyphens, and ".png".
+- Do not invent machine filenames. Use null only if no allowed machine fits the exercise.
+- For nutrition, habit, and recovery items, machine must be null.
+
+Allowed machine filenames:
+{chr(10).join(f"- {filename}" for filename in MACHINE_IMAGE_FILENAMES)}
 """
 
 
@@ -55,6 +95,7 @@ class ChecklistItem(BaseModel):
     target_value: Optional[float | str] = None
     unit: Optional[str] = None
     done: bool = False
+    machine: Optional[str] = None
 
 class DailyPlanBlock(BaseModel):
     title: str
