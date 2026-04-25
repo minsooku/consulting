@@ -1,0 +1,11 @@
+.git
+.DS_Store
+**/.env
+**/.venv
+**/venv
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+consulting-FE/frontend/node_modules
+consulting-FE/frontend/.expo
+consulting-BE/payload.json
