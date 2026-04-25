@@ -13,7 +13,7 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 # **** OpenAI Testing Step 2: Edit this SYSTEM_MSG (this engineers the model system) ****
 
 
-# **** OpenAI Testing Step 3: Build FitnessPrompt (this engineers the model system) ****
+# **** OpenAI Testing Step 3: Build FitnessPrompt (this engineers the model system)) ****
 p = FitnessPrompt(
     physique={
         "height": 180,
