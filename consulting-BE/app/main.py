@@ -1,4 +1,5 @@
 import os
+from contextlib import asynccontextmanager
 from datetime import date, timedelta
 from fastapi import Body, FastAPI, Header, HTTPException
 from dotenv import load_dotenv
@@ -15,10 +16,19 @@ PLAN_WEEKS = int(os.getenv("PLAN_WEEKS", "4"))
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-app = FastAPI(title="AI Fitness Planner", version="0.1.0")
 
-Base.metadata.create_all(bind=engine)
-ensure_user_uuid_column()
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    if engine is not None:
+        try:
+            Base.metadata.create_all(bind=engine)
+            ensure_user_uuid_column()
+        except Exception as e:
+            print(f"[startup] DB init failed (continuing without it): {e}")
+    yield
+
+
+app = FastAPI(title="AI Fitness Planner", version="0.1.0", lifespan=lifespan)
 
 app.include_router(auth.router)
 app.include_router(routes.router)

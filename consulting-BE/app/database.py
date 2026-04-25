@@ -8,12 +8,10 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 load_dotenv()
 
 
-def get_database_url() -> str:
+def get_database_url() -> str | None:
     database_url = os.getenv("DATABASE_URL") or os.getenv("SUPABASE_DB_URL")
     if not database_url:
-        raise RuntimeError(
-            "DATABASE_URL is not set. Add your Supabase Postgres connection string to .env."
-        )
+        return None
 
     if database_url.startswith("postgres://"):
         database_url = database_url.replace("postgres://", "postgresql+psycopg2://", 1)
@@ -29,14 +27,19 @@ def get_connect_args() -> dict[str, str]:
 
 
 DATABASE_URL = get_database_url()
-
-engine = create_engine(
-    DATABASE_URL,
-    connect_args=get_connect_args(),
-    pool_pre_ping=True,
-)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
+
+if DATABASE_URL:
+    engine = create_engine(
+        DATABASE_URL,
+        connect_args=get_connect_args(),
+        pool_pre_ping=True,
+    )
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+else:
+    print("[database] WARNING: DATABASE_URL not set; DB-dependent endpoints will fail at runtime.")
+    engine = None
+    SessionLocal = None
 
 
 def get_db():
