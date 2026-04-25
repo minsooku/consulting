@@ -211,25 +211,26 @@ class _ExerciseDetailRowState extends State<_ExerciseDetailRow> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // ── Main row ────────────────────────────────────────────────────────
-        GestureDetector(
-          onTap: () => setState(() => item.done = !item.done),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            child: Row(
-              children: [
-                // Done toggle
-                GestureDetector(
-                  onTap: () => setState(() => item.done = !item.done),
-                  child: Icon(
-                    item.done
-                        ? Icons.check_circle
-                        : Icons.radio_button_unchecked,
-                    size: 22,
-                    color: item.done ? AppColors.success : AppColors.sub,
-                  ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          child: Row(
+            children: [
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => setState(() => item.done = !item.done),
+                child: Icon(
+                  item.done
+                      ? Icons.check_circle
+                      : Icons.radio_button_unchecked,
+                  size: 22,
+                  color: item.done ? AppColors.success : AppColors.sub,
                 ),
-                const SizedBox(width: 14),
-                Expanded(
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => setState(() => item.done = !item.done),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -262,29 +263,38 @@ class _ExerciseDetailRowState extends State<_ExerciseDetailRow> {
                     ],
                   ),
                 ),
-                if (imagePath != null)
-                  GestureDetector(
-                    onTap: () => widget.onToggleImage(imagePath),
-                    child: Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: widget.isImageExpanded
-                              ? AppColors.accent
-                              : AppColors.sub,
-                          width: 1,
-                        ),
+              ),
+              if (imagePath != null)
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => widget.onToggleImage(imagePath),
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: widget.isImageExpanded
+                            ? AppColors.accent
+                            : AppColors.sub,
+                        width: 1.5,
                       ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(9),
-                        child: Image.asset(imagePath, fit: BoxFit.cover),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(9),
+                      child: Image.asset(
+                        imagePath,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, _, _) => const Icon(
+                          Icons.fitness_center,
+                          size: 20,
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                     ),
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
         ),
 
@@ -302,7 +312,21 @@ class _ExerciseDetailRowState extends State<_ExerciseDetailRow> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Image.asset(imagePath, fit: BoxFit.contain, height: 200),
+                  Image.asset(
+                    imagePath,
+                    fit: BoxFit.contain,
+                    height: 200,
+                    errorBuilder: (_, _, _) => const SizedBox(
+                      height: 200,
+                      child: Center(
+                        child: Icon(
+                          Icons.fitness_center,
+                          size: 48,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ),
+                  ),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,

@@ -73,11 +73,18 @@ class FitnessProvider extends ChangeNotifier {
 
   // ── Public actions ───────────────────────────────────────────────────────
 
+  /// Signal that a plan is being loaded (call before navigating to HomePage).
+  void startLoading() {
+    _loading = true;
+    _error = null;
+    notifyListeners();
+  }
+
   /// Load mock data instantly — no network required.
-  /// Real API call (generatePlan) will overwrite this.
   void loadMock() {
     _plan = MockFitness.response();
     _savedPrompt = MockFitness.prompt;
+    _loading = false;
     notifyListeners();
   }
 
@@ -131,11 +138,14 @@ class FitnessProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Wipe the cached plan (e.g., to regenerate).
+  /// Wipe cached plan + prompt so the app restarts onboarding on next launch.
   Future<void> clearPlan() async {
     _plan = null;
+    _savedPrompt = null;
+    _loading = false;
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_kPlanKey);
+    await prefs.remove(_kPromptKey);
     notifyListeners();
   }
 

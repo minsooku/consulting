@@ -35,6 +35,7 @@ import 'package:consulting_fe/provider/profile_provider.dart';
 @pragma('vm:entry-point')
 void sheetMain() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await AuthService.instance.loadFromStorage();
   runApp(
     CNSheetApp(

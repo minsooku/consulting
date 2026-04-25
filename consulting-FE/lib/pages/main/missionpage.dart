@@ -6,6 +6,7 @@ import 'package:consulting_fe/api/models/fitness_models.dart';
 import 'package:consulting_fe/const/app_colors.dart';
 import 'package:consulting_fe/mock/machine_images.dart';
 import 'package:consulting_fe/mock/mock_fitness.dart';
+import 'package:consulting_fe/pages/onboarding/onboarding_intro_page.dart';
 import 'package:consulting_fe/provider/fitness_provider.dart';
 
 class MissionPage extends StatefulWidget {
@@ -109,6 +110,13 @@ class _MissionPageState extends State<MissionPage>
               );
               if (confirm == true && mounted) {
                 await context.read<FitnessProvider>().clearPlan();
+                if (!mounted) return;
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (_) => const OnboardingIntroPage(),
+                  ),
+                  (_) => false,
+                );
               }
             },
             child: Container(
@@ -152,156 +160,274 @@ class _MissionPageState extends State<MissionPage>
   }
 }
 
-// ── Weekly tab ────────────────────────────────────────────────────────────────
+// ── Weekly tab — vertical day tiles ──────────────────────────────────────────
 
-class _WeeklyTab extends StatefulWidget {
+class _WeeklyTab extends StatelessWidget {
   const _WeeklyTab({required this.fp});
 
   final FitnessProvider fp;
 
-  @override
-  State<_WeeklyTab> createState() => _WeeklyTabState();
-}
-
-class _WeeklyTabState extends State<_WeeklyTab> {
-  late int _selectedWeekday; // 1=Mon … 7=Sun
-
-  static const List<String> _weekdayShort = [
+  static const _weekdayNames = [
     'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun',
+  ];
+  static const _monthNames = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
   ];
 
   @override
-  void initState() {
-    super.initState();
-    _selectedWeekday = DateTime.now().weekday;
-  }
+  Widget build(BuildContext context) {
+    final plans = fp.plan?.daily ?? [];
+    if (plans.isEmpty) return const _EmptyPlanState();
 
-  DailyPlan? get _selectedDayPlan {
-    final weekDays = widget.fp.thisWeekDays;
-    final idx = _selectedWeekday - 1;
-    return idx < weekDays.length ? weekDays[idx] : null;
+    return ListView.separated(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 120),
+      itemCount: plans.length,
+      separatorBuilder: (_, _) => const SizedBox(height: 10),
+      itemBuilder: (_, i) => _DayTile(
+        plan: plans[i],
+        weekdayNames: _weekdayNames,
+        monthNames: _monthNames,
+      ),
+    );
+  }
+}
+
+// ── Day tile ──────────────────────────────────────────────────────────────────
+
+class _DayTile extends StatelessWidget {
+  const _DayTile({
+    required this.plan,
+    required this.weekdayNames,
+    required this.monthNames,
+  });
+
+  final DailyPlan plan;
+  final List<String> weekdayNames;
+  final List<String> monthNames;
+
+  bool get _isToday {
+    final now = DateTime.now();
+    return plan.date.year == now.year &&
+        plan.date.month == now.month &&
+        plan.date.day == now.day;
   }
 
   @override
   Widget build(BuildContext context) {
-    final weekDays = widget.fp.thisWeekDays;
+    final isToday = _isToday;
+    final workouts = plan.workoutBlocks;
+    final dayLabel =
+        '${weekdayNames[plan.date.weekday - 1]},  '
+        '${monthNames[plan.date.month - 1]} ${plan.date.day}';
 
-    return Column(
-      children: [
-        const SizedBox(height: 12),
-        _buildDayStrip(weekDays),
-        const SizedBox(height: 8),
-        Expanded(child: _buildDayContent()),
-      ],
-    );
-  }
-
-  Widget _buildDayStrip(List<DailyPlan?> weekDays) {
-    final today = DateTime.now().weekday;
-    return SizedBox(
-      height: 76,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        itemCount: 7,
-        separatorBuilder: (_, _) => const SizedBox(width: 6),
-        itemBuilder: (context, i) {
-          final weekday = i + 1;
-          final isSelected = weekday == _selectedWeekday;
-          final isToday = weekday == today;
-          final dayPlan = weekDays[i];
-          final hasWorkout =
-              dayPlan != null && dayPlan.workoutBlocks.isNotEmpty;
-
-          return GestureDetector(
-            onTap: () => setState(() => _selectedWeekday = weekday),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 44,
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? AppColors.mainPoint
-                    : isToday
-                    ? AppColors.sub
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: isSelected ? AppColors.mainPoint : AppColors.sub,
-                  width: 1,
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isToday ? AppColors.mainPoint : AppColors.sub,
+          width: isToday ? 1.5 : 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── Day header ───────────────────────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
+            child: Row(
+              children: [
+                Text(
+                  dayLabel,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: isToday
+                        ? AppColors.mainPoint
+                        : AppColors.textPrimary,
+                  ),
                 ),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    _weekdayShort[i][0],
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: isSelected
-                          ? AppColors.mainPointText
-                          : AppColors.textSecondary,
+                if (isToday) ...[
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: AppColors.mainPoint,
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    _weekdayShort[i][0].toLowerCase(),
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: isSelected
-                          ? AppColors.mainPointText
-                          : AppColors.textPrimary,
-                    ),
-                  ),
-                  if (hasWorkout && !isSelected)
-                    Container(
-                      width: 4,
-                      height: 4,
-                      margin: const EdgeInsets.only(top: 2),
-                      decoration: const BoxDecoration(
-                        color: AppColors.accent,
-                        shape: BoxShape.circle,
+                    child: const Text(
+                      'Today',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.mainPointText,
                       ),
                     ),
+                  ),
                 ],
-              ),
+              ],
             ),
-          );
-        },
+          ),
+          const Divider(height: 1, color: AppColors.sub),
+          // ── Content ──────────────────────────────────────────────────────
+          if (workouts.isEmpty)
+            _buildNoWorkout()
+          else
+            ...workouts.map((b) => _WorkoutSection(block: b)),
+        ],
       ),
     );
   }
 
-  Widget _buildDayContent() {
-    final dayPlan = _selectedDayPlan;
+  Widget _buildNoWorkout() {
+    final hasRecovery = plan.blocks.any((b) => b.category == 'recovery');
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+      child: Row(
+        children: [
+          Text(
+            hasRecovery ? '🌿' : '😴',
+            style: const TextStyle(fontSize: 20),
+          ),
+          const SizedBox(width: 10),
+          Text(
+            hasRecovery ? 'Active Recovery' : 'Rest Day',
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
-    if (!widget.fp.hasPlan) {
-      return const _EmptyPlanState();
-    }
+// ── Workout section inside a day tile ─────────────────────────────────────────
 
-    if (dayPlan == null) {
-      return const _EmptyDayState(
-        emoji: '📅',
-        title: 'No plan for this day',
-        subtitle: 'This day falls outside your plan window.',
-      );
-    }
+class _WorkoutSection extends StatelessWidget {
+  const _WorkoutSection({required this.block});
 
-    if (dayPlan.isRestDay) {
-      return const _EmptyDayState(
-        emoji: '😴',
-        title: 'Rest Day',
-        subtitle: 'Recovery is part of the process.',
-      );
-    }
+  final DailyBlock block;
 
-    return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(20, 4, 20, 120),
-      itemCount: dayPlan.workoutBlocks.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 10),
-      itemBuilder: (context, i) =>
-          _WorkoutBlockCard(block: dayPlan.workoutBlocks[i]),
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Block header
+          Row(
+            children: [
+              const Icon(Icons.fitness_center, size: 15, color: AppColors.accent),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  block.title,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ),
+              Text(
+                '${block.durationMin} min',
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 2),
+          Row(
+            children: const [
+              SizedBox(width: 21),
+              Icon(Icons.location_on, size: 11, color: AppColors.textSecondary),
+              SizedBox(width: 2),
+              Text(
+                'Eppley',
+                style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          // Exercise rows with machine images
+          ...block.details.map((item) => _ExerciseTileRow(item: item)),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Exercise row with machine image thumbnail ─────────────────────────────────
+
+class _ExerciseTileRow extends StatelessWidget {
+  const _ExerciseTileRow({required this.item});
+
+  final ChecklistItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    final imagePath =
+        MachineImages.resolve(machine: item.machine, exerciseName: item.label);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          // Machine image thumbnail
+          if (imagePath != null)
+            Container(
+              width: 36,
+              height: 36,
+              margin: const EdgeInsets.only(right: 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: AppColors.sub, width: 1),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(7),
+                child: Image.asset(
+                  imagePath,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, _, _) => const Icon(
+                    Icons.fitness_center,
+                    size: 16,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ),
+            )
+          else
+            const SizedBox(width: 46),
+          // Name
+          Expanded(
+            child: Text(
+              item.label,
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ),
+          // Target
+          if (item.targetDisplay.isNotEmpty)
+            Text(
+              item.targetDisplay,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textSecondary,
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
@@ -691,44 +817,6 @@ class _EmptyPlanState extends StatelessWidget {
   }
 }
 
-class _EmptyDayState extends StatelessWidget {
-  const _EmptyDayState({
-    required this.emoji,
-    required this.title,
-    required this.subtitle,
-  });
-
-  final String emoji;
-  final String title;
-  final String subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(emoji, style: const TextStyle(fontSize: 48)),
-          const SizedBox(height: 12),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            subtitle,
-            style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _WorkoutBlockCard extends StatefulWidget {
   const _WorkoutBlockCard({required this.block});
 
@@ -744,89 +832,97 @@ class _WorkoutBlockCardState extends State<_WorkoutBlockCard> {
   @override
   Widget build(BuildContext context) {
     final block = widget.block;
-    return GestureDetector(
-      onTap: () => setState(() => _expanded = !_expanded),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.sub, width: 1),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: AppColors.mainPoint.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(10),
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.sub, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Only the header row is tappable for expand/collapse.
+          // This prevents gesture conflicts with exercise row interactions.
+          GestureDetector(
+            onTap: () => setState(() => _expanded = !_expanded),
+            behavior: HitTestBehavior.opaque,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: AppColors.mainPoint.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(
+                      Icons.fitness_center,
+                      size: 18,
+                      color: AppColors.mainPoint,
+                    ),
                   ),
-                  child: const Icon(
-                    Icons.fitness_center,
-                    size: 18,
-                    color: AppColors.mainPoint,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        block.title,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          block.title,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                          ),
                         ),
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            '${block.durationMin} min',
-                            style: const TextStyle(
-                              fontSize: 12,
+                        Row(
+                          children: [
+                            Text(
+                              '${block.durationMin} min',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            const Icon(
+                              Icons.location_on,
+                              size: 11,
                               color: AppColors.textSecondary,
                             ),
-                          ),
-                          const SizedBox(width: 6),
-                          const Icon(
-                            Icons.location_on,
-                            size: 11,
-                            color: AppColors.textSecondary,
-                          ),
-                          const SizedBox(width: 2),
-                          const Text(
-                            'Eppley',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: AppColors.textSecondary,
+                            const SizedBox(width: 2),
+                            const Text(
+                              'Eppley',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: AppColors.textSecondary,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Icon(
-                  _expanded ? Icons.expand_less : Icons.expand_more,
-                  size: 20,
-                  color: AppColors.textSecondary,
-                ),
-              ],
+                  Icon(
+                    _expanded ? Icons.expand_less : Icons.expand_more,
+                    size: 20,
+                    color: AppColors.textSecondary,
+                  ),
+                ],
+              ),
             ),
-            if (_expanded && block.details.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              const Divider(height: 1, color: AppColors.sub),
-              const SizedBox(height: 10),
-              ...block.details.map((item) => _ExerciseRow(item: item)),
-            ],
+          ),
+          if (_expanded && block.details.isNotEmpty) ...[
+            const Divider(height: 1, color: AppColors.sub),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
+              child: Column(
+                children: block.details.map((item) => _ExerciseRow(item: item)).toList(),
+              ),
+            ),
           ],
-        ),
+        ],
       ),
     );
   }
@@ -852,21 +948,24 @@ class _ExerciseRowState extends State<_ExerciseRow> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        GestureDetector(
-          onTap: () {
-            setState(() => item.done = !item.done);
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: Row(
-              children: [
-                Icon(
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: Row(
+            children: [
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => setState(() => item.done = !item.done),
+                child: Icon(
                   item.done ? Icons.check_circle : Icons.radio_button_unchecked,
                   size: 18,
                   color: item.done ? AppColors.success : AppColors.sub,
                 ),
-                const SizedBox(width: 10),
-                Expanded(
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => setState(() => item.done = !item.done),
                   child: Text(
                     item.label,
                     style: TextStyle(
@@ -874,48 +973,51 @@ class _ExerciseRowState extends State<_ExerciseRow> {
                       color: item.done
                           ? AppColors.textSecondary
                           : AppColors.textPrimary,
-                      decoration:
-                          item.done ? TextDecoration.lineThrough : null,
+                      decoration: item.done ? TextDecoration.lineThrough : null,
                     ),
                   ),
                 ),
-                if (item.targetDisplay.isNotEmpty)
-                  Text(
-                    item.targetDisplay,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.textSecondary,
-                    ),
+              ),
+              if (item.targetDisplay.isNotEmpty)
+                Text(
+                  item.targetDisplay,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textSecondary,
                   ),
-                if (imagePath != null) ...[
-                  const SizedBox(width: 8),
-                  GestureDetector(
-                    onTap: () => setState(() => _showImage = !_showImage),
-                    child: Container(
-                      width: 28,
-                      height: 28,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(
-                          color: _showImage
-                              ? AppColors.accent
-                              : AppColors.sub,
-                          width: 1,
-                        ),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5),
-                        child: Image.asset(
-                          imagePath,
-                          fit: BoxFit.cover,
-                        ),
+                ),
+              if (imagePath != null) ...[
+                const SizedBox(width: 8),
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => setState(() => _showImage = !_showImage),
+                  child: Container(
+                    width: 34,
+                    height: 34,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: _showImage ? AppColors.accent : AppColors.sub,
+                        width: 1.5,
                       ),
                     ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(7),
+                      child: Image.asset(
+                        imagePath,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, _, _) => const Icon(
+                          Icons.fitness_center,
+                          size: 16,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ),
                   ),
-                ],
+                ),
               ],
-            ),
+            ],
           ),
         ),
         if (imagePath != null && _showImage)
@@ -935,6 +1037,16 @@ class _ExerciseRowState extends State<_ExerciseRow> {
                     imagePath,
                     fit: BoxFit.contain,
                     height: 160,
+                    errorBuilder: (_, _, _) => const SizedBox(
+                      height: 160,
+                      child: Center(
+                        child: Icon(
+                          Icons.fitness_center,
+                          size: 40,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ),
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(

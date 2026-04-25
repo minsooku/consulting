@@ -103,17 +103,16 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
     });
 
     final fp = context.read<FitnessProvider>();
+    final prompt = _buildPrompt();
 
-    // Load mock immediately so the user doesn't wait.
-    fp.loadMock();
-
-    // Fire-and-forget: attempt real API in background to update if it responds.
-    fp.generatePlan(_buildPrompt()).ignore();
+    // Signal loading BEFORE navigating so homepage shows "Loading…".
+    fp.startLoading();
 
     setState(() => _exiting = true);
     await Future.delayed(const Duration(milliseconds: 350));
     if (!mounted) return;
 
+    // Navigate immediately — homepage renders the loading state.
     Navigator.of(context).pushAndRemoveUntil(
       PageRouteBuilder(
         pageBuilder: (_, _, _) => const HomePage(fromOnboarding: true),
@@ -123,6 +122,11 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
       ),
       (_) => false,
     );
+
+    // Load data after a short delay so the user can see the loading state.
+    await Future.delayed(const Duration(milliseconds: 700));
+    fp.loadMock();
+    fp.generatePlan(prompt).ignore();
   }
 
   bool get _stepComplete {
