@@ -241,7 +241,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ],
       ),
-      child: Image.asset('assets/login/light_icon.png', width: 88, height: 88),
+      // child: Image.asset('assets/login/light_icon.png', width: 88, height: 88),
     );
   }
 

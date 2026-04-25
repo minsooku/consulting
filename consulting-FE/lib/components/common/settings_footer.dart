@@ -13,14 +13,14 @@ class SettingsFooter extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 90, top: 40),
       child: Column(
         children: [
-          ClipRRect(
-            child: Image.asset(
-              'assets/login/light_icon.png',
-              width: 72,
-              height: 72,
-              fit: BoxFit.cover,
-            ),
-          ),
+          // ClipRRect(
+          //   child: Image.asset(
+          //     'assets/login/light_icon.png',
+          //     width: 72,
+          //     height: 72,
+          //     fit: BoxFit.cover,
+          //   ),
+          // ),
           const SizedBox(height: 16),
           const Text(
             'Developed by Wonjae Kim',

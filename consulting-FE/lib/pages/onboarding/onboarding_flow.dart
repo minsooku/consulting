@@ -103,26 +103,20 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
     });
 
     final fp = context.read<FitnessProvider>();
-    final prompt = _buildPrompt();
 
-    // Call the real API; fall back to mock on any error.
-    await fp.generatePlan(prompt);
-    if (!mounted) return;
+    // Load mock immediately so the user doesn't wait.
+    fp.loadMock();
 
-    if (!fp.hasPlan) {
-      // API failed — load mock so the user still gets a plan.
-      fp.loadMock();
-    }
+    // Fire-and-forget: attempt real API in background to update if it responds.
+    fp.generatePlan(_buildPrompt()).ignore();
 
     setState(() => _exiting = true);
     await Future.delayed(const Duration(milliseconds: 350));
     if (!mounted) return;
 
-    // Replace the entire navigator stack so the user can't go back to onboarding.
     Navigator.of(context).pushAndRemoveUntil(
       PageRouteBuilder(
-        pageBuilder: (_, _, _) =>
-            const HomePage(fromOnboarding: true),
+        pageBuilder: (_, _, _) => const HomePage(fromOnboarding: true),
         transitionsBuilder: (_, animation, _, child) =>
             FadeTransition(opacity: animation, child: child),
         transitionDuration: const Duration(milliseconds: 500),

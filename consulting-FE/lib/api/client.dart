@@ -22,20 +22,23 @@ class ApiClient {
     };
   }
 
+  static const _timeout = Duration(seconds: 10);
+
   Future<dynamic> get(String path) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl$path'),
-      headers: await _headers(),
-    );
+    final response = await http
+        .get(Uri.parse('$baseUrl$path'), headers: await _headers())
+        .timeout(_timeout);
     return _handle(response);
   }
 
   Future<dynamic> post(String path, {Map<String, dynamic>? body}) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl$path'),
-      headers: await _headers(),
-      body: body != null ? jsonEncode(body) : null,
-    );
+    final response = await http
+        .post(
+          Uri.parse('$baseUrl$path'),
+          headers: await _headers(),
+          body: body != null ? jsonEncode(body) : null,
+        )
+        .timeout(_timeout);
     return _handle(response);
   }
 
